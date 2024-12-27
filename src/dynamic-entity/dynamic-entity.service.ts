@@ -21,4 +21,15 @@ export class DynamicEntityService {
     const model = this.getModel(entityName);
     return model.find().exec();
   }
+
+  async findAllWithPagination(
+    entity: string,
+    query: any,
+    fields: string,
+    limit: number,
+    skip: number,
+  ) {
+    const model = this.getModel(entity);
+    return model.find(query, fields).limit(limit).skip(skip).exec();
+  }
 }

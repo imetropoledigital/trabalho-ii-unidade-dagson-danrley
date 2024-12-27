@@ -17,4 +17,22 @@ export class DynamicEntityController {
   async getAllEntities(@Param('entity') entity: string): Promise<any[]> {
     return this.dynamicEntityService.findAll(entity);
   }
+
+  @Get('pagination')
+  async findAllWithPagination(
+    @Param('entity') entity: string,
+    @Query('query') query: string,
+    @Query('fields') fields: string,
+    @Query('limit') limit = 10,
+    @Query('skip') skip = 0,
+  ) {
+    const parsedQuery = query ? JSON.parse(query) : {};
+    return this.dynamicEntityService.findAllWithPagination(
+      entity,
+      parsedQuery,
+      fields,
+      +limit,
+      +skip,
+    );
+  }
 }
