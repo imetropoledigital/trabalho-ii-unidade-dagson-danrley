@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { DynamicEntityController } from './dynamic-entity.controller';
 import { DynamicEntityService } from './dynamic-entity.service';
-import { DynamicEntitySchema } from './dynamic-entity.schema';
+import { DynamicEntityController as DynamicEntityController } from './dynamic-entity.controller';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: 'DynamicEntity', schema: DynamicEntitySchema }]),
-  ],
+  imports: [MongooseModule.forFeatureAsync([])],
   controllers: [DynamicEntityController],
   providers: [DynamicEntityService],
 })

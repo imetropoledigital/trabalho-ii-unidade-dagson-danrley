@@ -1,25 +1,26 @@
-import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { DynamicEntityService } from './dynamic-entity.service';
 
 @Controller(':entity')
 export class DynamicEntityController {
-  constructor(private readonly dynamicEntityService: DynamicEntityService) {}
+  constructor(private readonly dynamicService: DynamicEntityService) {}
 
   @Post()
-  async createDynamicEntity(
-    @Param('entity') entity: string,
-    @Body() body: any,
-  ): Promise<any> {
-    return this.dynamicEntityService.createEntity(entity, body);
+  async create(@Param('entity') entity: string, @Body() body: any) {
+    return this.dynamicService.create(entity, body);
   }
 
   @Get()
-  async getAllEntities(@Param('entity') entity: string): Promise<any[]> {
-    return this.dynamicEntityService.findAll(entity);
-  }
-
-  @Get('pagination')
-  async findAllWithPagination(
+  async findAll(
     @Param('entity') entity: string,
     @Query('query') query: string,
     @Query('fields') fields: string,
@@ -27,12 +28,35 @@ export class DynamicEntityController {
     @Query('skip') skip = 0,
   ) {
     const parsedQuery = query ? JSON.parse(query) : {};
-    return this.dynamicEntityService.findAllWithPagination(
+    return this.dynamicService.findAll(
       entity,
       parsedQuery,
       fields,
       +limit,
       +skip,
     );
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param('entity') entity: string,
+    @Param('id') id: string,
+    @Query('fields') fields: string,
+  ) {
+    return this.dynamicService.findOne(entity, id, fields);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('entity') entity: string,
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
+    return this.dynamicService.update(entity, id, body);
+  }
+
+  @Delete(':id')
+  async delete(@Param('entity') entity: string, @Param('id') id: string) {
+    return this.dynamicService.delete(entity, id);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model, Schema } from 'mongoose';
 
@@ -11,18 +11,12 @@ export class DynamicEntityService {
     return this.connection.model(entityName, schema, entityName);
   }
 
-  async createEntity(entityName: string, data: any): Promise<any> {
-    const model = this.getModel(entityName);
-    const newEntity = new model(data);
-    return newEntity.save();
+  async create(entity: string, data: any) {
+    const model = this.getModel(entity);
+    return new model(data).save();
   }
 
-  async findAll(entityName: string): Promise<any[]> {
-    const model = this.getModel(entityName);
-    return model.find().exec();
-  }
-
-  async findAllWithPagination(
+  async findAll(
     entity: string,
     query: any,
     fields: string,
@@ -31,5 +25,22 @@ export class DynamicEntityService {
   ) {
     const model = this.getModel(entity);
     return model.find(query, fields).limit(limit).skip(skip).exec();
+  }
+
+  async findOne(entity: string, id: string, fields: string) {
+    const model = this.getModel(entity);
+    const item = await model.findById(id, fields).exec();
+    if (!item) throw new NotFoundException(`${entity} not found`);
+    return item;
+  }
+
+  async update(entity: string, id: string, data: any) {
+    const model = this.getModel(entity);
+    return model.findByIdAndUpdate(id, data, { new: true }).exec();
+  }
+
+  async delete(entity: string, id: string) {
+    const model = this.getModel(entity);
+    return model.findByIdAndDelete(id).exec();
   }
 }
