@@ -16,4 +16,9 @@ export class DynamicEntityService {
     const newEntity = new model(data);
     return newEntity.save();
   }
+
+  async findAll(entityName: string): Promise<any[]> {
+    const model = this.getModel(entityName);
+    return model.find().exec();
+  }
 }
